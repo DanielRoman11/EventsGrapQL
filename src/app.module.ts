@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppDummy } from './app.dummy';
@@ -11,15 +11,18 @@ import ormConfigProd from './config/orm.config.prod';
 import { EventsModule } from './events/events.module';
 import { SchoolModule } from './school/school.module';
 
+console.log(((c = new ConfigService()) => c.get<string>('DB_HOST'))());
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: [`${process.env.NODE_ENV}.env`],
       load: [ormConfig],
       expandVariables: true,
-      envFilePath: `${process.env.NODE_ENV ?? ''}.env`,
     }),
     TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
       useFactory:
         process.env.NODE_ENV !== 'production' ? ormConfig : ormConfigProd,
     }),
