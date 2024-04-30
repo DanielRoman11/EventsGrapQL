@@ -1,10 +1,17 @@
-// import { Query, Resolver } from '@nestjs/graphql';
+import { Query, Resolver } from '@nestjs/graphql';
 import { Teacher } from './teacher.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
-// @Resolver(() => Teacher)
-// export class TeacherResolver {
-//   @Query(() => [Teacher])
-//   public async teachers(): Promise<Teacher[]> {
-//     return [] as Teacher[];
-//   }
-// }
+@Resolver(() => Teacher)
+export class TeacherResolver {
+  constructor(
+    @InjectRepository(Teacher)
+    private readonly teachersRepo: Repository<Teacher>,
+  ) {}
+
+  @Query(() => [Teacher])
+  public async teachers(): Promise<Teacher[]> {
+    return await this.teachersRepo.find();
+  }
+}

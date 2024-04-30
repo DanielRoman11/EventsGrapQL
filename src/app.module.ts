@@ -10,14 +10,14 @@ import ormConfig from './config/orm.config';
 import ormConfigProd from './config/orm.config.prod';
 import { EventsModule } from './events/events.module';
 import { SchoolModule } from './school/school.module';
-
-console.log(((c = new ConfigService()) => c.get<string>('DB_HOST'))());
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [`${process.env.NODE_ENV}.env`],
+      envFilePath: [`.env.${process.env.NODE_ENV}`],
       load: [ormConfig],
       expandVariables: true,
     }),
@@ -25,6 +25,11 @@ console.log(((c = new ConfigService()) => c.get<string>('DB_HOST'))());
       inject: [ConfigService],
       useFactory:
         process.env.NODE_ENV !== 'production' ? ormConfig : ormConfigProd,
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      playground: true,
     }),
     AuthModule,
     EventsModule,

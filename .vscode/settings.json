@@ -1,13 +1,10 @@
 {
-  "eslint.validate": [
-    "javascript",
-    "typescript"
-  ],
+  "eslint.validate": ["javascript", "typescript"],
   "eslint.format.enable": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "workbench.colorTheme": "Carbon Theme",
+  "workbench.colorTheme": "Chinolor",
   "editor.fontFamily": "Cascadia Code",
-  "editor.fontWeight": "400",
+  "editor.fontWeight": "400"
 }
