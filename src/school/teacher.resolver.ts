@@ -47,15 +47,10 @@ export class TeacherResolver {
     @Args('input', { type: () => Teacher })
     teacher: Teacher,
   ) {
-    const query = this.teachersRepo
-      .createQueryBuilder('t')
-      .insert()
-      .into(Teacher)
-      .values({ name: teacher.name, subjects: teacher.subjects });
-
+    const newTeacher = await this.teachersRepo.save(teacher);
     this.teacherLogger.debug(
-      'Insert Teacher: ' + query.getQueryAndParameters(),
+      this.teachersRepo.createQueryBuilder('t').getQuery(),
     );
-    return await query.execute();
+    return newTeacher;
   }
 }
