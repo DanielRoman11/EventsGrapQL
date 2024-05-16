@@ -2,12 +2,11 @@ import {
   Args,
   Int,
   Mutation,
-  PickType,
   Query,
   Resolver,
 } from '@nestjs/graphql';
 import { Teacher } from './teacher.entity';
-import { InsertResult, Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
 

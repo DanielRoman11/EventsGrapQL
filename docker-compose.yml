@@ -1,5 +1,6 @@
 services:
-  eventosDb:
+  db:
+    platform: linux/x86_64
     container_name: eventosDb
     image: mysql:8.0.23
     command: --default-authentication-plugin=caching_sha2_password
@@ -8,3 +9,18 @@ services:
       - '3307:3306'
     env_file:
       - .env.dev
+
+  app:
+    image: graphqlapi
+    container_name: eventsGraphql
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env.dev
+    volumes:
+      - ./src:/usr/src/app/src
+    depends_on:
+      - db
