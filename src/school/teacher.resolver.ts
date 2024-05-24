@@ -3,12 +3,14 @@ import {
   Int,
   Mutation,
   Query,
+  ResolveField,
   Resolver,
+  Parent
 } from '@nestjs/graphql';
 import { Teacher } from './teacher.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Logger } from '@nestjs/common';
+import { Logger, Param } from '@nestjs/common';
 import { TeacherAddInput } from './input/teacher-add.input';
 
 @Resolver(() => Teacher)
@@ -51,5 +53,13 @@ export class TeacherResolver {
       this.teachersRepo.createQueryBuilder('t').getQuery(),
     );
     return newTeacher;
+  }
+
+  @ResolveField('subjects')
+  public async subjects(
+    @Parent() teacher: Teacher
+  ){
+    this.teacherLogger.debug(`@ResolveField subjects was called`)
+    return await teacher.subjects;
   }
 }
