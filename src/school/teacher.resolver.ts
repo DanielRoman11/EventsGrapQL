@@ -13,6 +13,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Logger, Param } from '@nestjs/common';
 import { TeacherAddInput } from './input/teacher-add.input';
 import { TeacherEditInput } from './input/teacher-edit.input';
+import { EntityWithNumberId } from './school.types';
 
 @Resolver(() => Teacher)
 export class TeacherResolver {
@@ -70,6 +71,21 @@ export class TeacherResolver {
     return await this.teachersRepo.save(
       new Teacher(Object.assign(teacher, input)),
     );
+  }
+
+  @Mutation(() => EntityWithNumberId, { name: 'teacherDelete' })
+  public async delete(
+    @Args('id', { type: () => Int })
+    id: number,
+  ): Promise<EntityWithNumberId> {
+    const query = this.teachersBaseQuery();
+    const teacher = await query.where('t.id = :id', { id }).getOneOrFail();
+
+    await this.teachersRepo.delete(teacher.id).then(() => {
+      this.teacherLogger.debug(`Teacher with id ${id} was deleted`);
+    });
+
+    return new EntityWithNumberId(id);
   }
 
   @ResolveField('subjects')
