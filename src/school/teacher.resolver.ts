@@ -5,13 +5,14 @@ import {
   Query,
   ResolveField,
   Resolver,
-  Parent
+  Parent,
 } from '@nestjs/graphql';
 import { Teacher } from './teacher.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger, Param } from '@nestjs/common';
 import { TeacherAddInput } from './input/teacher-add.input';
+import { TeacherEditInput } from './input/teacher-edit.input';
 
 @Resolver(() => Teacher)
 export class TeacherResolver {
@@ -27,7 +28,7 @@ export class TeacherResolver {
 
   @Query(() => [Teacher])
   public async teachers(): Promise<Teacher[]> {
-    const query = this.teachersBaseQuery()
+    const query = this.teachersBaseQuery();
     this.teacherLogger.debug('Find All: ' + query.getQuery());
     return await query.getMany();
   }
@@ -37,8 +38,7 @@ export class TeacherResolver {
     @Args('id', { type: () => Int })
     id: Pick<Teacher, 'id'>,
   ): Promise<Teacher> {
-    const query = this.teachersBaseQuery()
-      .where('t.id = :id', { id })
+    const query = this.teachersBaseQuery().where('t.id = :id', { id });
     this.teacherLogger.debug('Find One: ' + query.getQuery());
     return await query.getOneOrFail();
   }
@@ -55,11 +55,26 @@ export class TeacherResolver {
     return newTeacher;
   }
 
+  @Mutation(() => Teacher, { name: 'teacherEdit' })
+  public async edit(
+    @Args('id', { type: () => Int })
+    id: Pick<Teacher, 'id'>,
+    @Args('input', { type: () => TeacherEditInput })
+    input: TeacherEditInput,
+  ) {
+    const query = this.teachersBaseQuery();
+    const teacher = await query.where('t.id = :id', { id }).getOneOrFail();
+
+    this.teacherLogger.debug(`The teacher ${teacher.name}, was modified`);
+
+    return await this.teachersRepo.save(
+      new Teacher(Object.assign(teacher, input)),
+    );
+  }
+
   @ResolveField('subjects')
-  public async subjects(
-    @Parent() teacher: Teacher
-  ){
-    this.teacherLogger.debug(`@ResolveField subjects was called`)
+  public async subjects(@Parent() teacher: Teacher) {
+    this.teacherLogger.debug(`@ResolveField subjects was called`);
     return await teacher.subjects;
   }
 }
