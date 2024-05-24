@@ -9,6 +9,7 @@ import { Teacher } from './teacher.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
+import { TeacherAddInput } from './input/teacher-add.input';
 
 @Resolver(() => Teacher)
 export class TeacherResolver {
@@ -24,7 +25,7 @@ export class TeacherResolver {
 
   @Query(() => [Teacher])
   public async teachers(): Promise<Teacher[]> {
-    const query = this.teachersBaseQuery().leftJoinAndSelect('t.subjects', 's');
+    const query = this.teachersBaseQuery()
     this.teacherLogger.debug('Find All: ' + query.getQuery());
     return await query.getMany();
   }
@@ -36,17 +37,16 @@ export class TeacherResolver {
   ): Promise<Teacher> {
     const query = this.teachersBaseQuery()
       .where('t.id = :id', { id })
-      .leftJoinAndSelect('t.subjects', 's');
     this.teacherLogger.debug('Find One: ' + query.getQuery());
     return await query.getOneOrFail();
   }
 
   @Mutation(() => Teacher, { name: 'teacherAdd' })
   public async add(
-    @Args('input', { type: () => Teacher })
-    teacher: Teacher,
+    @Args('input', { type: () => TeacherAddInput })
+    input: TeacherAddInput,
   ) {
-    const newTeacher = await this.teachersRepo.save(teacher);
+    const newTeacher = await this.teachersRepo.save(new Teacher(input));
     this.teacherLogger.debug(
       this.teachersRepo.createQueryBuilder('t').getQuery(),
     );
