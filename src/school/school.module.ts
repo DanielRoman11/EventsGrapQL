@@ -5,9 +5,10 @@ import { Teacher } from './teacher.entity';
 import { TeacherResolver } from './teacher.resolver';
 import { SubjectResolver } from './subject.resolver';
 import { CourseResolver } from './course.resolver';
+import { Course } from './course.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Subject, Teacher])],
+  imports: [TypeOrmModule.forFeature([Subject, Teacher, Course])],
   providers: [TeacherResolver, SubjectResolver, CourseResolver],
   controllers: [],
 })
