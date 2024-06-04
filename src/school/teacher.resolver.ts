@@ -10,7 +10,7 @@ import {
 import { Teacher } from './teacher.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Logger, Param } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { TeacherAddInput } from './input/teacher-add.input';
 import { TeacherEditInput } from './input/teacher-edit.input';
 import { EntityWithNumberId } from './school.types';
