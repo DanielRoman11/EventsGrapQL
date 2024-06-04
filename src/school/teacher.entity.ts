@@ -6,24 +6,23 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Subject } from './subject.entity';
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Gender } from './school.types';
 import { Course } from './course.entity';
 
 @Entity()
 @ObjectType()
-@InputType('TeacherInput')
 export class Teacher {
   constructor(partial?: Partial<Teacher>) {
     Object.assign(this, partial);
   }
 
   @PrimaryGeneratedColumn()
-  @Field({ nullable: true })
+  @Field()
   id: number;
 
   @Column()
-  @Field({ nullable: true })
+  @Field()
   name: string;
 
   @Column({
