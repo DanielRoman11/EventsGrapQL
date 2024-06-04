@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Subject } from './subject.entity';
 import { Teacher } from './teacher.entity';
@@ -7,7 +7,7 @@ import { Teacher } from './teacher.entity';
 @ObjectType()
 export class Course {
   @PrimaryGeneratedColumn()
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   id: number;
 
   @Column()
