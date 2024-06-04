@@ -13,6 +13,10 @@ import { Course } from './course.entity';
 @Entity()
 @ObjectType()
 export class Subject {
+  constructor(partial: Partial<Subject>) {
+    Object.assign(this, partial);
+  }
+
   @PrimaryGeneratedColumn()
   @Field()
   id: number;
