@@ -38,6 +38,17 @@ export class CourseResolver {
     return await query.getMany();
   }
 
+  @Query(() => Course)
+  public async course(
+    @Args('id', { type: () => Number })
+    id: number,
+  ) {
+    const query = this.courseBaseQuery();
+    const course = query.where({ id });
+    this.logger.debug(course.getQuery());
+    return await course.getOneOrFail();
+  }
+
   @Mutation(() => Course, { name: 'courseAdd' })
   public async add(
     @Args('input', { type: () => CourseAddInput })
