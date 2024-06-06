@@ -93,12 +93,7 @@ export class CourseResolver {
     });
 
     const courseEdited = await this.courseRepo.save(
-      new Course({
-        id: coursePrev.id,
-        name: input.name,
-        subject: Promise.resolve(subject),
-        teacher: Promise.resolve(teacher),
-      }),
+      new Course(Object.assign(coursePrev, input)),
     );
     this.logger.debug(this.courseRepo.createQueryBuilder('c').getQuery());
 
