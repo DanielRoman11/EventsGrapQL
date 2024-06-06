@@ -2,6 +2,7 @@ import {
   Args,
   Mutation,
   Parent,
+  Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
@@ -20,6 +21,17 @@ export class SubjectResolver {
     @InjectRepository(Subject)
     private readonly subjectRepo: Repository<Subject>,
   ) {}
+
+  private baseSubjectQuery() {
+    return this.subjectRepo.createQueryBuilder('s');
+  }
+
+  @Query(() => [Subject], { name: 'subjects' })
+  public async subjects(): Promise<Subject[]> {
+    const query = this.baseSubjectQuery();
+    this.logger.debug(query.getQuery());
+    return await query.getMany();
+  }
 
   @Mutation(() => Subject, { name: 'subjectAdd' })
   public async add(
