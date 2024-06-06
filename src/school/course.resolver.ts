@@ -14,6 +14,7 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CourseEditInput } from './input/course-edit.input';
+import { EntityWithNumberId } from './school.types';
 
 @Resolver(() => Course)
 export class CourseResolver {
@@ -102,6 +103,28 @@ export class CourseResolver {
     this.logger.debug(this.courseRepo.createQueryBuilder('c').getQuery());
 
     return courseEdited;
+  }
+
+  @Mutation(() => EntityWithNumberId)
+  public async delete(
+    @Args('id', { type: () => Number })
+    id: number,
+  ): Promise<EntityWithNumberId> {
+    const query = this.courseBaseQuery();
+    const course = await query.where({ id }).getOneOrFail();
+
+    await this.courseRepo
+      .delete(course.id)
+      .then(() => {
+        this.logger.debug(
+          `Course with ID ${course.id} been deleted successfully`,
+        );
+      })
+      .catch((err) => {
+        this.logger.error(err);
+      });
+
+    return new EntityWithNumberId(id);
   }
 
   @ResolveField('teacher')
