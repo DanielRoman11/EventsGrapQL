@@ -105,7 +105,7 @@ export class CourseResolver {
     return courseEdited;
   }
 
-  @Mutation(() => EntityWithNumberId)
+  @Mutation(() => EntityWithNumberId, { name: 'courseDelete' })
   public async delete(
     @Args('id', { type: () => Number })
     id: number,
