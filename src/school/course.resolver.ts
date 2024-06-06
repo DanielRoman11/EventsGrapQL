@@ -10,7 +10,7 @@ import { Course } from './course.entity';
 import { Teacher } from './teacher.entity';
 import { Subject } from './subject.entity';
 import { CourseAddInput } from './input/course-add.input';
-import { Logger } from '@nestjs/common';
+import { Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CourseEditInput } from './input/course-edit.input';
@@ -77,27 +77,55 @@ export class CourseResolver {
 
   @Mutation(() => Course, { name: 'courseEdit' })
   public async edit(
-    @Args('id', { type: () => Number })
-    id: Pick<Course, 'id'>,
-    @Args('input', { type: () => CourseEditInput })
-    input: CourseEditInput,
+    @Args('id', { type: () => Number }) id: number,
+    @Args('input', { type: () => CourseEditInput }) input: CourseEditInput,
   ) {
     const query = this.courseBaseQuery();
-    const coursePrev = await query.where({ id }).getOneOrFail();
+    const coursePrev = await query.where('c.id = :id', { id }).getOne();
 
-    const teacher = await this.teacherRepo.findOneByOrFail({
-      id: input.teacherId,
+    if (!coursePrev) {
+      throw new NotFoundException('Course not found');
+    }
+
+    const [teacher, subject] = await Promise.all([
+      input.teacherId
+        ? this.teacherRepo
+            .createQueryBuilder('t')
+            .where('t.id = :id', { id: input.teacherId })
+            .getOne()
+        : Promise.resolve(null),
+      input.subjectId
+        ? this.subjectRepo
+            .createQueryBuilder('s')
+            .where('s.id = :id', { id: input.subjectId })
+            .getOne()
+        : Promise.resolve(null),
+    ]);
+
+    if (input.teacherId && !teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
+    if (input.subjectId && !subject) {
+      throw new NotFoundException('Subject not found');
+    }
+
+    const course = this.courseRepo.create({
+      ...coursePrev,
+      ...input,
     });
-    const subject = await this.subjectRepo.findOneByOrFail({
-      id: input.subjectId,
-    });
 
-    const courseEdited = await this.courseRepo.save(
-      new Course(Object.assign(coursePrev, input)),
-    );
-    this.logger.debug(this.courseRepo.createQueryBuilder('c').getQuery());
+    teacher && (course.teacher = teacher);
+    subject && (course.subject = subject);
 
-    return courseEdited;
+    return await this.courseRepo
+      .save(course)
+      .then((result) => {
+        this.logger.debug(`Course with id "${id}" edited successfully`);
+        return result;
+      })
+      .catch((err) => {
+        this.logger.error(err);
+      });
   }
 
   @Mutation(() => EntityWithNumberId, { name: 'courseDelete' })

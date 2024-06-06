@@ -10,10 +10,11 @@ import {
 import { Teacher } from './teacher.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { TeacherAddInput } from './input/teacher-add.input';
 import { TeacherEditInput } from './input/teacher-edit.input';
 import { EntityWithNumberId } from './school.types';
+import { AuthGuardJWTGql } from 'src/auth/auth-guard.jwt.gql';
 
 @Resolver(() => Teacher)
 export class TeacherResolver {
@@ -45,6 +46,7 @@ export class TeacherResolver {
   }
 
   @Mutation(() => Teacher, { name: 'teacherAdd' })
+  @UseGuards(AuthGuardJWTGql)
   public async add(
     @Args('input', { type: () => TeacherAddInput })
     input: TeacherAddInput,
@@ -57,6 +59,7 @@ export class TeacherResolver {
   }
 
   @Mutation(() => Teacher, { name: 'teacherEdit' })
+  @UseGuards(AuthGuardJWTGql)
   public async edit(
     @Args('id', { type: () => Int })
     id: Pick<Teacher, 'id'>,
