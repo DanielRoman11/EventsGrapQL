@@ -81,9 +81,14 @@ export class TeacherResolver {
     const query = this.teachersBaseQuery();
     const teacher = await query.where('t.id = :id', { id }).getOneOrFail();
 
-    await this.teachersRepo.delete(teacher.id).then(() => {
-      this.teacherLogger.debug(`Teacher with id ${id} was deleted`);
-    });
+    await this.teachersRepo
+      .delete(teacher.id)
+      .then(() => {
+        this.teacherLogger.debug(`Teacher with id ${id} was deleted`);
+      })
+      .catch((err) => {
+        this.teacherLogger.error(err);
+      });
 
     return new EntityWithNumberId(id);
   }
