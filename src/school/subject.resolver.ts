@@ -12,7 +12,8 @@ import { Course } from './course.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SubjectAddInput } from './input/subject-add.input';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
+import { AuthGuardJWTGql } from 'src/auth/auth-guard.jwt.gql';
 
 @Resolver(() => Subject)
 export class SubjectResolver {
@@ -34,6 +35,7 @@ export class SubjectResolver {
   }
 
   @Mutation(() => Subject, { name: 'subjectAdd' })
+  @UseGuards(AuthGuardJWTGql)
   public async add(
     @Args('input', { type: () => SubjectAddInput })
     input: SubjectAddInput,

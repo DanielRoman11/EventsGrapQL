@@ -77,6 +77,7 @@ export class TeacherResolver {
   }
 
   @Mutation(() => EntityWithNumberId, { name: 'teacherDelete' })
+  @UseGuards(AuthGuardJWTGql)
   public async delete(
     @Args('id', { type: () => Int })
     id: number,
