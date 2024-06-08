@@ -1,6 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsNumber, IsOptional, Length } from 'class-validator';
-import { Optional } from '@nestjs/common';
+import { IsNotEmpty, Length } from 'class-validator';
 
 @InputType()
 export class CourseAddInput {
