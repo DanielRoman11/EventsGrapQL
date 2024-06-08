@@ -2,18 +2,25 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { TokenOutput } from './input/token.output';
 import { AuthService } from './auth.service';
 import { LoginInput } from './input/login.input';
+import { RegisterUserInput } from './input/register.input';
+import { UserWithTokenOutput } from './input/userWithToken.output';
 
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
-  // @Mutation()
-  // public async register(
-  //   @Args('input', { type: () => RegisterUserInput })
-  //   input: RegisterUserInput,
-  // ) {
-  //   return (await this.userRepo.save(input)) as User;
-  // }
+  @Mutation(() => UserWithTokenOutput, { name: 'register' })
+  public async register(
+    @Args('input', { type: () => RegisterUserInput })
+    input: RegisterUserInput,
+  ) {
+    const user = await this.authService.createNewUser(input);
+
+    return new UserWithTokenOutput({
+      ...user,
+      token: this.authService.getTokenForUser(user),
+    });
+  }
 
   @Mutation(() => TokenOutput, { name: 'login' })
   public async login(
