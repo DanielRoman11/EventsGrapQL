@@ -10,6 +10,7 @@ import {
 import { Attendee } from './../events/attendee.entity';
 import { Event } from './../events/event.entity';
 import { Profile } from './profile.entity';
+import { ObjectType } from '@nestjs/graphql';
 
 @Entity()
 export class User {

@@ -57,23 +57,24 @@ export class CourseResolver {
     @Args('input', { type: () => CourseAddInput })
     input: CourseAddInput,
   ) {
-    const teacher = await this.teacherRepo.findOneByOrFail({
-      id: input.teacherId,
-    });
-    const subject = await this.subjectRepo.findOneByOrFail({
-      id: input.subjectId,
-    });
+    const [teacher, subject] = await Promise.all([
+      this.teacherRepo.findOneByOrFail({
+        id: input.teacherId,
+      }),
+      this.subjectRepo.findOneByOrFail({
+        id: input.subjectId,
+      }),
+    ]);
 
-    const course = new Course({
-      name: input.name,
-      subject: Promise.resolve(subject),
-      teacher: Promise.resolve(teacher),
-    });
-
-    await this.courseRepo.save(course);
+    const course = await this.courseRepo.save(
+      new Course({
+        name: input.name,
+        teacher: Promise.resolve(teacher),
+        subject: Promise.resolve(subject),
+      }),
+    );
 
     this.logger.debug(this.courseRepo.createQueryBuilder('c').getQuery());
-    console.log(course);
     return course;
   }
 
