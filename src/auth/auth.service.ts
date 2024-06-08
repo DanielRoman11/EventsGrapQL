@@ -51,7 +51,7 @@ export class AuthService {
 
   public async createNewUser(input: RegisterUserInput) {
     if (input.password !== input.retypedPassword)
-      throw new BadRequestException('Passwords are different');
+      throw new BadRequestException('Passwords are not identical');
 
     if (
       await this.userRepo.exists({
@@ -59,6 +59,10 @@ export class AuthService {
       })
     )
       throw new BadRequestException('This user/email is already taken');
-    return await this.userRepo.save(input);
+
+    return await this.userRepo.save({
+      ...input,
+      password: await bcrypt.hash(input.password, await bcrypt.genSalt()),
+    });
   }
 }
