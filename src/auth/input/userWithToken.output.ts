@@ -4,7 +4,7 @@ import { User } from '../user.entity';
 @ObjectType()
 export class UserWithTokenOutput extends User {
   constructor(partial: Partial<UserWithTokenOutput>) {
-    super();
+    super({});
     Object.assign(this, partial);
   }
 

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   ClassSerializerInterceptor,
   Controller,
@@ -23,31 +22,25 @@ export class UsersController {
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   async create(@Body() createUserDto: CreateUserDto) {
-    const user = new User();
-
     // if (createUserDto.password !== createUserDto.retypedPassword) {
     //   throw new BadRequestException(['Passwords are not identical']);
     // }
 
-    const existingUser = await this.userRepository.findOne({
-      where: [
-        { username: createUserDto.username },
-        { email: createUserDto.email },
-      ],
-    });
+    // const existingUser = await this.userRepository.findOne({
+    //   where: [
+    //     { username: createUserDto.username },
+    //     { email: createUserDto.email },
+    //   ],
+    // });
 
-    if (existingUser) {
-      throw new BadRequestException(['username or email is already taken']);
-    }
+    // if (existingUser) {
+    //   throw new BadRequestException(['username or email is already taken']);
+    // }
 
-    user.username = createUserDto.username;
-    user.password = await this.authService.hashPassword(createUserDto.password);
-    user.email = createUserDto.email;
-    user.firstName = createUserDto.firstName;
-    user.lastName = createUserDto.lastName;
+    const user = await this.userRepository.save(new User(createUserDto));
 
     return {
-      ...(await this.userRepository.save(user)),
+      ...user,
       token: this.authService.getTokenForUser(user),
     };
   }
