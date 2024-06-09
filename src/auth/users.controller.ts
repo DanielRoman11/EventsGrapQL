@@ -1,4 +1,11 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthService } from './auth.service';
@@ -14,12 +21,13 @@ export class UsersController {
   ) {}
 
   @Post()
+  @UseInterceptors(ClassSerializerInterceptor)
   async create(@Body() createUserDto: CreateUserDto) {
     const user = new User();
 
-    if (createUserDto.password !== createUserDto.retypedPassword) {
-      throw new BadRequestException(['Passwords are not identical']);
-    }
+    // if (createUserDto.password !== createUserDto.retypedPassword) {
+    //   throw new BadRequestException(['Passwords are not identical']);
+    // }
 
     const existingUser = await this.userRepository.findOne({
       where: [
