@@ -2,6 +2,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { EntityNotFoundErrorFilter } from './entitiy-not-found-error.filter';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   const logger = new Logger();
@@ -11,6 +12,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new EntityNotFoundErrorFilter());
   app.useLogger(new Logger('AppContext', { timestamp: true }));
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');

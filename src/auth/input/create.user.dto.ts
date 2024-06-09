@@ -1,8 +1,10 @@
 import { IsEmail, Length } from 'class-validator';
 import { IsRepeated } from 'src/validation/is-repeated.constraint';
+import { UserNotExists } from '../validation/user-not-exist.constraint';
 
 export class CreateUserDto {
   @Length(5)
+  @UserNotExists()
   username: string;
 
   @Length(8)
@@ -19,5 +21,6 @@ export class CreateUserDto {
   lastName: string;
 
   @IsEmail()
+  @UserNotExists()
   email: string;
 }
