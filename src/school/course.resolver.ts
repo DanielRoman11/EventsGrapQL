@@ -15,7 +15,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CourseEditInput } from './input/course-edit.input';
 import { EntityWithNumberId } from './school.types';
-import { AuthGuardJWTGql } from 'src/auth/auth-guard.jwt.gql';
+import { AuthGuardJWTGql } from '../auth/auth-guard.jwt.gql';
 
 @Resolver(() => Course)
 export class CourseResolver {

@@ -14,7 +14,7 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { TeacherAddInput } from './input/teacher-add.input';
 import { TeacherEditInput } from './input/teacher-edit.input';
 import { EntityWithNumberId } from './school.types';
-import { AuthGuardJWTGql } from 'src/auth/auth-guard.jwt.gql';
+import { AuthGuardJWTGql } from '../auth/auth-guard.jwt.gql';
 
 @Resolver(() => Teacher)
 export class TeacherResolver {

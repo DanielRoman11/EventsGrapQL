@@ -1,5 +1,5 @@
 import { IsEmail, Length } from 'class-validator';
-import { IsRepeated } from 'src/validation/is-repeated.constraint';
+import { IsRepeated } from '../../validation/is-repeated.constraint';
 import { UserNotExists } from '../validation/user-not-exist.constraint';
 
 export class CreateUserDto {

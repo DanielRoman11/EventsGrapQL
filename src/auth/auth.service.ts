@@ -50,16 +50,6 @@ export class AuthService {
   }
 
   public async createNewUser(input: RegisterUserInput) {
-    if (input.password !== input.retypedPassword)
-      throw new BadRequestException('Passwords are not identical');
-
-    if (
-      await this.userRepo.exists({
-        where: [{ email: input.email }, { username: input.username }],
-      })
-    )
-      throw new BadRequestException('This user/email is already taken');
-
     return await this.userRepo.save({
       ...input,
       password: await bcrypt.hash(input.password, await bcrypt.genSalt()),

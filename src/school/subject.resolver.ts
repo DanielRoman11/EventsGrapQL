@@ -13,7 +13,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SubjectAddInput } from './input/subject-add.input';
 import { Logger, UseGuards } from '@nestjs/common';
-import { AuthGuardJWTGql } from 'src/auth/auth-guard.jwt.gql';
+import { AuthGuardJWTGql } from '../auth/auth-guard.jwt.gql';
 
 @Resolver(() => Subject)
 export class SubjectResolver {
