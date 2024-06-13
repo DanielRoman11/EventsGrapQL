@@ -7,7 +7,7 @@ import {
   Resolver,
   Parent,
 } from '@nestjs/graphql';
-import { Teacher } from './teacher.entity';
+import { PaginatedTeachers, Teacher } from './teacher.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger, UseGuards } from '@nestjs/common';
@@ -15,6 +15,7 @@ import { TeacherAddInput } from './input/teacher-add.input';
 import { TeacherEditInput } from './input/teacher-edit.input';
 import { EntityWithNumberId } from './school.types';
 import { AuthGuardJWTGql } from '../auth/auth-guard.jwt.gql';
+import { paginate } from 'src/pagination/paginator';
 
 @Resolver(() => Teacher)
 export class TeacherResolver {
@@ -28,11 +29,11 @@ export class TeacherResolver {
     return this.teachersRepo.createQueryBuilder('t');
   }
 
-  @Query(() => [Teacher])
-  public async teachers(): Promise<Teacher[]> {
+  @Query(() => PaginatedTeachers)
+  public async teachers(): Promise<PaginatedTeachers> {
     const query = this.teachersBaseQuery();
     this.teacherLogger.debug('Find All: ' + query.getQuery());
-    return await query.getMany();
+    return paginate<Teacher, PaginatedTeachers>(query, PaginatedTeachers);
   }
 
   @Query(() => Teacher)
